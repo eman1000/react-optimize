@@ -20,8 +20,7 @@ export class Experiment extends React.Component {
   };
 
   delayedInitialization = () => {
-    const value =
-      window.google_optimize && window.google_optimize.get(this.props.id);
+    const value = (typeof window !== "undefined" && window.google_optimize) && window.google_optimize.get(this.props.id);
     this.updateVariant(value);
   };
 
@@ -32,7 +31,7 @@ export class Experiment extends React.Component {
 
     // Delayed init
     const hideEnd =
-      window.dataLayer && window.dataLayer.hide && window.dataLayer.hide.end;
+    (typeof window !== "undefined") && window.dataLayer && window.dataLayer.hide && window.dataLayer.hide.end;
     if (hideEnd) {
       window.dataLayer.hide.end = () => {
         this.delayedInitialization();
@@ -42,14 +41,14 @@ export class Experiment extends React.Component {
       this.delayedInitialization();
     }
 
-    window.gtag && window.gtag("event", "optimize.callback", {
+    (typeof window !== "undefined" && window.gtag )&& window.gtag("event", "optimize.callback", {
       name: this.props.id,
       callback: this.updateVariant
     });
   }
 
   componentWillUnmount() {
-    window.gtag && window.gtag("event", "optimize.callback", {
+    (typeof window !== "undefined" && window.gtag) && window.gtag("event", "optimize.callback", {
       name: this.props.id,
       callback: this.updateVariant,
       remove: true
